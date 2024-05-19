@@ -51,6 +51,8 @@ namespace Clippy.Wpf.Demo.ViewModels
             {
                 character.PlayAnimation("Pleased", AnimationMode.Once);
             }
+
+            character.Say("Hello! This is a longer message to see if the wrapping works as expected.", TimeSpan.FromSeconds(4));
         }
 
         private void RecreateCharacter(Character character)
@@ -64,7 +66,7 @@ namespace Clippy.Wpf.Demo.ViewModels
             m_character = new ClippyCharacter(character);
             m_character.OnDoubleClick += OnCharacterDoubleClicked;
             m_character.Show();
-
+            
             Animations.Clear();
             foreach (var animationName in m_character.AnimationNames.OrderBy(x => x))
             {

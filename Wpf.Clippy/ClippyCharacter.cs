@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Wpf.Clippy.Types;
 using Wpf.Clippy.ViewModels;
 using Wpf.Clippy.Views;
@@ -57,6 +58,11 @@ namespace Wpf.Clippy
         public bool PlayAnimation(string animationName, AnimationMode mode)
         {
             return m_viewModel.PlayAnimation(animationName, mode);
+        }
+
+        public void Say(string message, TimeSpan dismissAfter)
+        {
+            m_viewModel.Say(message, dismissAfter);
         }
     }
 }

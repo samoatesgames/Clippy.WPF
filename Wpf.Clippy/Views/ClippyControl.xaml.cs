@@ -16,7 +16,11 @@ namespace Wpf.Clippy.Views
             InitializeComponent();
             DataContext = m_viewModel = viewModel;
 
+            m_viewModel.SetSpeechPopup(SpeechPopup);
+
             Closing += OnClosing;
+            LocationChanged += ClippyControl_LocationChanged;
+
             Canvas.PreviewMouseLeftButtonDown += (s, e) =>
             {
                 if (e.ClickCount == 2)
@@ -24,6 +28,7 @@ namespace Wpf.Clippy.Views
                     OnDoubleClick?.Invoke(this, m_viewModel);
                     return;
                 }
+
                 DragMove();
             };
 
@@ -32,6 +37,13 @@ namespace Wpf.Clippy.Views
             {
                 mainWindow.Closing += MainWindowOnClosing;
             }
+        }
+
+        private void ClippyControl_LocationChanged(object sender, System.EventArgs e)
+        {
+            var offset = SpeechPopup.HorizontalOffset;
+            SpeechPopup.HorizontalOffset = offset + 1;
+            SpeechPopup.HorizontalOffset = offset;
         }
 
         private void OnClosing(object sender, CancelEventArgs e)

@@ -76,6 +76,8 @@
     <Compile Include="ClippyCharacter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\CharacterData.cs" />
+    <Compile Include="Types\ClippyMessage.cs" />
+    <Compile Include="Types\ClippySpeechMessage.cs" />
     <Compile Include="ViewModels\ClippyViewModel.cs" />
     <Compile Include="Views\ClippyControl.xaml.cs">
       <DependentUpon>ClippyControl.xaml</DependentUpon>

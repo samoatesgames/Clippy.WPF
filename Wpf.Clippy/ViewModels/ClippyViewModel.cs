@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Wpf.Clippy.Types;
@@ -25,9 +26,14 @@ namespace Wpf.Clippy.ViewModels
         private Point m_frameCoords;
         private Rect m_frameRect;
 
+        private Popup m_speechPopup;
+        private ClippyMessage m_activeMessage;
+        
         public IReadOnlyCollection<string> AnimationNames => m_data.Animations.Keys;
 
         public string ActiveAnimation { get; private set; }
+
+        public string ActiveSpeechMessage => m_activeMessage?.Message;
 
         public ImageSource ImageMap { get; }
 
@@ -71,6 +77,11 @@ namespace Wpf.Clippy.ViewModels
             m_cancellationTokenSource.Cancel();
         }
 
+        public void SetSpeechPopup(Popup speechPopup)
+        {
+            m_speechPopup = speechPopup;
+        }
+
         public bool PlayAnimation(string animationName, AnimationMode mode)
         {
             if (!m_data.Animations.ContainsKey(animationName))
@@ -90,6 +101,17 @@ namespace Wpf.Clippy.ViewModels
             return true;
         }
 
+        public void Say(string message, TimeSpan dismissAfter)
+        {
+            m_activeMessage = new ClippySpeechMessage(message, dismissAfter);
+            OnPropertyChanged(nameof(ActiveSpeechMessage));
+
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                m_speechPopup.IsOpen = true;
+            });
+        }
+
         private async Task UpdateAsync()
         {
             var token = m_cancellationTokenSource.Token;
@@ -99,6 +121,19 @@ namespace Wpf.Clippy.ViewModels
             {
                 while (!token.IsCancellationRequested)
                 {
+                    if (m_activeMessage != null)
+                    {
+                        if (m_activeMessage.ShouldDismiss)
+                        {
+                            m_activeMessage = null;
+
+                            await Application.Current.Dispatcher.InvokeAsync(() =>
+                            {
+                                m_speechPopup.IsOpen = false;
+                            });
+                        }
+                    }
+
                     if (m_activeAnimation == null)
                     {
                         await Task.Delay(TimeSpan.FromMilliseconds(20), token)

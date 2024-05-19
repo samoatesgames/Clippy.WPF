@@ -21,6 +21,21 @@
                 <RectangleGeometry Rect="{Binding FrameRect}" />
             </Image.Clip>
         </Image>
+
+        <Popup x:Name="SpeechPopup"
+               Placement="Right"
+               PlacementTarget="{Binding ElementName=Canvas}"
+               MinWidth="160" MaxWidth="260">
+            <Border Background="White" BorderBrush="Black" 
+                    BorderThickness="1" Padding="10"
+                    CornerRadius="4">
+                <TextBlock TextWrapping="Wrap"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"
+                           Text="{Binding ActiveSpeechMessage}" />
+            </Border>
+        </Popup>
     </Canvas>
 
 </Window>
