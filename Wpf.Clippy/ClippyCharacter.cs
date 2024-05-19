@@ -24,6 +24,9 @@ namespace Wpf.Clippy
         private readonly ClippyControl m_control;
         private readonly ClippyViewModel m_viewModel;
 
+        public delegate void ClippyCharacterEventHandler(ClippyCharacter sender);
+        public event ClippyCharacterEventHandler OnDoubleClick;
+
         public Character CharacterType { get; }
         public string ActiveAnimation => m_viewModel.ActiveAnimation;
         public IReadOnlyCollection<string> AnimationNames => m_viewModel.AnimationNames;
@@ -33,6 +36,12 @@ namespace Wpf.Clippy
             CharacterType = character;
             m_viewModel = new ClippyViewModel(character);
             m_control = new ClippyControl(m_viewModel);
+            m_control.OnDoubleClick += HandleDoubleClick;
+        }
+
+        private void HandleDoubleClick(ClippyControl control, ClippyViewModel viewModel)
+        {
+            OnDoubleClick?.Invoke(this);
         }
 
         public void Show()
@@ -45,9 +54,9 @@ namespace Wpf.Clippy
             m_control.Close();
         }
 
-        public void PlayAnimation(string animationName)
+        public bool PlayAnimation(string animationName, AnimationMode mode)
         {
-            m_viewModel.PlayAnimation(animationName, AnimationMode.Loop);
+            return m_viewModel.PlayAnimation(animationName, mode);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Wpf.Clippy;
+using Wpf.Clippy.Types;
 
 namespace Clippy.Wpf.Demo.ViewModels
 {
@@ -22,7 +23,7 @@ namespace Clippy.Wpf.Demo.ViewModels
             {
                 if (value != m_character.ActiveAnimation)
                 {
-                    m_character.PlayAnimation(value);
+                    m_character.PlayAnimation(value, AnimationMode.Loop);
                     OnPropertyChanged();
                 }
             }
@@ -38,21 +39,39 @@ namespace Clippy.Wpf.Demo.ViewModels
             {
                 if (value != m_character?.CharacterType)
                 {
-                    m_character?.Close();
-                    m_character = new ClippyCharacter(value);
-                    m_character.Show();
-
+                    RecreateCharacter(value);
                     OnPropertyChanged();
-
-                    Animations.Clear();
-                    foreach (var animationName in m_character.AnimationNames.OrderBy(x => x))
-                    {
-                        Animations.Add(animationName);
-                    }
-                    SelectedAnimation = Animations.FirstOrDefault(x => x.ToLower().StartsWith("idle"))
-                        ?? Animations.FirstOrDefault();
                 }
             }
+        }
+
+        private void OnCharacterDoubleClicked(ClippyCharacter character)
+        {
+            if (!character.PlayAnimation("Wave", AnimationMode.Once))
+            {
+                character.PlayAnimation("Pleased", AnimationMode.Once);
+            }
+        }
+
+        private void RecreateCharacter(Character character)
+        {
+            if (m_character != null)
+            {
+                m_character.OnDoubleClick -= OnCharacterDoubleClicked;
+                m_character.Close();
+            }
+
+            m_character = new ClippyCharacter(character);
+            m_character.OnDoubleClick += OnCharacterDoubleClicked;
+            m_character.Show();
+
+            Animations.Clear();
+            foreach (var animationName in m_character.AnimationNames.OrderBy(x => x))
+            {
+                Animations.Add(animationName);
+            }
+            SelectedAnimation = Animations.FirstOrDefault(x => x.ToLower().StartsWith("idle"))
+                                ?? Animations.FirstOrDefault();
         }
 
         public MainWindowViewModel()

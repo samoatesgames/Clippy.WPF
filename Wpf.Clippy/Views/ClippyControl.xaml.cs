@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using Wpf.Clippy.Types;
 using Wpf.Clippy.ViewModels;
 
 namespace Wpf.Clippy.Views
@@ -8,6 +7,9 @@ namespace Wpf.Clippy.Views
     public partial class ClippyControl
     {
         private readonly ClippyViewModel m_viewModel;
+
+        public delegate void ClippyControlEventHandler(ClippyControl sender, ClippyViewModel viewModel);
+        public event ClippyControlEventHandler OnDoubleClick;
 
         public ClippyControl(ClippyViewModel viewModel)
         {
@@ -19,10 +21,7 @@ namespace Wpf.Clippy.Views
             {
                 if (e.ClickCount == 2)
                 {
-                    if (!viewModel.PlayAnimation("Wave", AnimationMode.Once))
-                    {
-                        viewModel.PlayAnimation("Pleased", AnimationMode.Once);
-                    }
+                    OnDoubleClick?.Invoke(this, m_viewModel);
                     return;
                 }
                 DragMove();
