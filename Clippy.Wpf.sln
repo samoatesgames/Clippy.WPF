@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clippy.Wpf.Demo", "Clippy.Wpf.Demo\Clippy.Wpf.Demo.csproj", "{6DFC88D8-ADF7-4381-BA80-6EDA6F6B7DCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf.Clippy", "Wpf.Clippy\Wpf.Clippy.csproj", "{FBFFCF28-CADB-4CB1-9FEC-9FF9AF801D32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6DFC88D8-ADF7-4381-BA80-6EDA6F6B7DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DFC88D8-ADF7-4381-BA80-6EDA6F6B7DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DFC88D8-ADF7-4381-BA80-6EDA6F6B7DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DFC88D8-ADF7-4381-BA80-6EDA6F6B7DCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBFFCF28-CADB-4CB1-9FEC-9FF9AF801D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBFFCF28-CADB-4CB1-9FEC-9FF9AF801D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBFFCF28-CADB-4CB1-9FEC-9FF9AF801D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBFFCF28-CADB-4CB1-9FEC-9FF9AF801D32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69A998D4-6C4B-4550-97C7-908155B1E83C}
+	EndGlobalSection
+EndGlobal
