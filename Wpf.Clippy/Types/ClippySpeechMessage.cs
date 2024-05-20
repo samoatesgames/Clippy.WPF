@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Wpf.Clippy.Types
 {
@@ -9,12 +11,15 @@ namespace Wpf.Clippy.Types
 
         public ClippySpeechMessage(string message, TimeSpan dismissAfter)
         {
-            Message = message;
             m_dismissAfter = dismissAfter;
             m_startTime = DateTime.Now;
+            Content = new TextBlock
+            {
+                Text = message
+            };
         }
 
-        public override string Message { get; }
+        public override FrameworkElement Content { get; }
 
         public override bool ShouldDismiss => DateTime.Now - m_startTime >= m_dismissAfter;
     }

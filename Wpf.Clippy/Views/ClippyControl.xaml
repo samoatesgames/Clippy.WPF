@@ -13,6 +13,13 @@
              WindowStyle="None" Topmost="True" 
              ShowInTaskbar="False"
              AllowsTransparency="True" Background="Transparent">
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+
     <Canvas x:Name="Canvas" Cursor="Hand">
         <Image Source="{Binding ImageMap}" Stretch="None"
                Canvas.Left="{Binding FrameCoords.X}" 
@@ -29,11 +36,11 @@
             <Border Background="White" BorderBrush="Black" 
                     BorderThickness="1" Padding="10"
                     CornerRadius="4">
-                <TextBlock TextWrapping="Wrap"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center"
-                           Text="{Binding ActiveSpeechMessage}" />
+                <ContentControl HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Content="{Binding ActiveMessage.Content}" />
             </Border>
         </Popup>
     </Canvas>

@@ -1,8 +1,10 @@
-﻿namespace Wpf.Clippy.Types
+﻿using System.Windows;
+
+namespace Wpf.Clippy.Types
 {
-    internal abstract class ClippyMessage
+    public abstract class ClippyMessage
     {
-        public abstract string Message { get; }
+        public abstract FrameworkElement Content { get; }
         public abstract bool ShouldDismiss { get; }
     }
 }

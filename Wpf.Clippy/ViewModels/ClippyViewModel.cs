@@ -33,7 +33,20 @@ namespace Wpf.Clippy.ViewModels
 
         public string ActiveAnimation { get; private set; }
 
-        public string ActiveSpeechMessage => m_activeMessage?.Message;
+        public ClippyMessage ActiveMessage
+        {
+            get => m_activeMessage;
+            private set
+            {
+                if (SetField(ref m_activeMessage, value))
+                {
+                    Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        m_speechPopup.IsOpen = true;
+                    });
+                }
+            }
+        }
 
         public ImageSource ImageMap { get; }
 
@@ -103,13 +116,7 @@ namespace Wpf.Clippy.ViewModels
 
         public void Say(string message, TimeSpan dismissAfter)
         {
-            m_activeMessage = new ClippySpeechMessage(message, dismissAfter);
-            OnPropertyChanged(nameof(ActiveSpeechMessage));
-
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                m_speechPopup.IsOpen = true;
-            });
+            ActiveMessage = new ClippySpeechMessage(message, dismissAfter);
         }
 
         private async Task UpdateAsync()
