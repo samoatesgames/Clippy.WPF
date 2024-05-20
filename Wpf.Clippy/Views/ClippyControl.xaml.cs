@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Wpf.Clippy.ViewModels;
 
 namespace Wpf.Clippy.Views
@@ -54,6 +56,26 @@ namespace Wpf.Clippy.Views
         private void MainWindowOnClosing(object sender, CancelEventArgs e)
         {
             Close();
+        }
+
+        private void Button_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!(sender is Button button))
+            {
+                return;
+            }
+
+            if (button.Command == null)
+            {
+                return;
+            }
+
+            if (!button.Command.CanExecute(button.CommandParameter))
+            {
+                return;
+            }
+
+            button.Command.Execute(button.CommandParameter);
         }
     }
 }

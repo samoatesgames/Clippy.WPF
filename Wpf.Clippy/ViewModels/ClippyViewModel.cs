@@ -85,17 +85,17 @@ namespace Wpf.Clippy.ViewModels
             Task.Run(UpdateAsync);
         }
 
-        public void Close()
+        internal void Close()
         {
             m_cancellationTokenSource.Cancel();
         }
 
-        public void SetSpeechPopup(Popup speechPopup)
+        internal void SetSpeechPopup(Popup speechPopup)
         {
             m_speechPopup = speechPopup;
         }
 
-        public bool PlayAnimation(string animationName, AnimationMode mode)
+        internal bool PlayAnimation(string animationName, AnimationMode mode)
         {
             if (!m_data.Animations.ContainsKey(animationName))
             {
@@ -114,9 +114,14 @@ namespace Wpf.Clippy.ViewModels
             return true;
         }
 
-        public void Say(string message, TimeSpan dismissAfter)
+        internal void Say(string message, TimeSpan dismissAfter)
         {
             ActiveMessage = new ClippySpeechMessage(message, dismissAfter);
+        }
+
+        internal void Say(FrameworkElement content, TimeSpan? dismissAfter)
+        {
+            ActiveMessage = new ClippyCustomMessage(content, dismissAfter);
         }
 
         private async Task UpdateAsync()

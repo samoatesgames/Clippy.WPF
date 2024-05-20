@@ -14,6 +14,13 @@
              ShowInTaskbar="False"
              AllowsTransparency="True" Background="Transparent">
     <Window.Resources>
+        <Style TargetType="{x:Type Border}">
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="1" />
+            <EventSetter Event="PreviewMouseDown" Handler="Button_PreviewMouseDown" />
+        </Style>
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="TextAlignment" Value="Center" />
@@ -32,10 +39,10 @@
         <Popup x:Name="SpeechPopup"
                Placement="Right"
                PlacementTarget="{Binding ElementName=Canvas}"
+               AllowsTransparency="True"
                MinWidth="160" MaxWidth="260">
             <Border Background="White" BorderBrush="Black" 
-                    BorderThickness="1" Padding="10"
-                    CornerRadius="4">
+                    BorderThickness="1" Padding="10">
                 <ContentControl HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"

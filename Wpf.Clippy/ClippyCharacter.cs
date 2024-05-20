@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using Wpf.Clippy.Types;
 using Wpf.Clippy.ViewModels;
 using Wpf.Clippy.Views;
@@ -63,6 +64,11 @@ namespace Wpf.Clippy
         public void Say(string message, TimeSpan dismissAfter)
         {
             m_viewModel.Say(message, dismissAfter);
+        }
+
+        public void Say(FrameworkElement content, TimeSpan? dismissAfter = null)
+        {
+            m_viewModel.Say(content, dismissAfter);
         }
     }
 }

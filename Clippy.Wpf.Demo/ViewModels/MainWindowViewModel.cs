@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Wpf.Clippy;
 using Wpf.Clippy.Types;
 
@@ -66,6 +68,8 @@ namespace Clippy.Wpf.Demo.ViewModels
             m_character = new ClippyCharacter(character);
             m_character.OnDoubleClick += OnCharacterDoubleClicked;
             m_character.Show();
+
+            AskQuestion();
             
             Animations.Clear();
             foreach (var animationName in m_character.AnimationNames.OrderBy(x => x))
@@ -74,6 +78,44 @@ namespace Clippy.Wpf.Demo.ViewModels
             }
             SelectedAnimation = Animations.FirstOrDefault(x => x.ToLower().StartsWith("idle"))
                                 ?? Animations.FirstOrDefault();
+        }
+
+        private void AskQuestion()
+        {
+            var dismissCommand = new DelegateCommand<string>(message =>
+            {
+                m_character.Say(message, TimeSpan.FromSeconds(3));
+            });
+
+            m_character.Say(new StackPanel
+            {
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = $"Hello! My name is {m_character.CharacterType}, how are you today?"
+                    },
+                    new UniformGrid
+                    {
+                        Columns = 2,
+                        Children =
+                        {
+                            new Button
+                            {
+                                Content = "I'm good thanks",
+                                Command = dismissCommand,
+                                CommandParameter = "That's great to hear!"
+                            },
+                            new Button
+                            {
+                                Content = "Not great",
+                                Command = dismissCommand,
+                                CommandParameter = "I'm sorry to hear that."
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         public MainWindowViewModel()
