@@ -1,5 +1,7 @@
 # Clippy.WPF
 
+![Clippy Preview](https://github.com/samoatesgames/Clippy.WPF/blob/main/Site/Example%20Clippy%2001.png?raw=true)
+
 Clippy.WPF is a C# library which allows the creation and interaction of Clippy characters.
 
 ## Features
@@ -84,6 +86,3 @@ character.Say(new TextBlock
 	Foreground = Brushes.Red 
 });
 ```
-## Examples
-
-![Clippy Preview](https://github.com/samoatesgames/Clippy.WPF/blob/main/Site/Example%20Clippy%2001.png?raw=true)
