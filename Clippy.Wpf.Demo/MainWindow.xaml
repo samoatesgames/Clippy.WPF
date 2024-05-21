@@ -20,5 +20,11 @@
         <ComboBox ItemsSource="{Binding Animations}"
                   SelectedItem="{Binding SelectedAnimation}"
         />
+
+        <TextBlock>Visibility:</TextBlock>
+        <UniformGrid Columns="2">
+            <Button Content="Hide" Margin="1" Command="{Binding HideCharacter}" />
+            <Button Content="Show" Margin="1" Command="{Binding ShowCharacter}" />
+        </UniformGrid>
     </StackPanel>
 </Window>

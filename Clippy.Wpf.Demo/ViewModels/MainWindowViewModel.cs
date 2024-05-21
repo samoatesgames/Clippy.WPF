@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Wpf.Clippy;
 using Wpf.Clippy.Types;
 
@@ -49,6 +50,28 @@ namespace Clippy.Wpf.Demo.ViewModels
             }
         }
 
+        public ICommand HideCharacter { get; }
+        public ICommand ShowCharacter { get; }
+
+        public MainWindowViewModel()
+        {
+            HideCharacter = new DelegateCommand<object>(_ =>
+            {
+                m_character?.Hide();
+            });
+
+            ShowCharacter = new DelegateCommand<object>(_ =>
+            {
+                m_character?.Show();
+            });
+
+            foreach (Character character in Enum.GetValues(typeof(Character)))
+            {
+                Characters.Add(character);
+            }
+            SelectedCharacter = Character.Clippy;
+        }
+
         private void OnCharacterDoubleClicked(ClippyCharacter character)
         {
             if (!character.PlayAnimation("Wave", AnimationMode.Once))
@@ -64,22 +87,30 @@ namespace Clippy.Wpf.Demo.ViewModels
             m_characterPosition = location;
         }
 
+        private void OnCharacterAnimationComplete(ClippyCharacter sender, string animationName, AnimationMode mode)
+        {
+            if (animationName == "Show")
+            {
+                Application.Current.Dispatcher.InvokeAsync(AskQuestion);
+            }
+        }
+
         private void RecreateCharacter(Character character)
         {
             if (m_character != null)
             {
                 m_character.OnDoubleClick -= OnCharacterDoubleClicked;
                 m_character.OnLocationChanged -= OnCharacterLocationChanged;
+                m_character.OnAnimationCompleted -= OnCharacterAnimationComplete;
                 m_character.Close();
             }
 
             m_character = new ClippyCharacter(character);
             m_character.OnDoubleClick += OnCharacterDoubleClicked;
             m_character.OnLocationChanged += OnCharacterLocationChanged;
+            m_character.OnAnimationCompleted += OnCharacterAnimationComplete;
             m_character.Show();
             m_character.Location = m_characterPosition;
-
-            AskQuestion();
             
             Animations.Clear();
             foreach (var animationName in m_character.AnimationNames.OrderBy(x => x))
@@ -126,16 +157,6 @@ namespace Clippy.Wpf.Demo.ViewModels
                     }
                 }
             });
-        }
-
-        public MainWindowViewModel()
-        {
-            foreach (Character character in Enum.GetValues(typeof(Character)))
-            {
-                Characters.Add(character);
-            }
-
-            SelectedCharacter = Character.Clippy;
         }
 
         #region INotifyPropertyChanged

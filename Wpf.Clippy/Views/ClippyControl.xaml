@@ -30,7 +30,8 @@
     <Canvas x:Name="Canvas" Cursor="Hand">
         <Image Source="{Binding ImageMap}" Stretch="None"
                Canvas.Left="{Binding FrameCoords.X}" 
-               Canvas.Top="{Binding FrameCoords.Y}">
+               Canvas.Top="{Binding FrameCoords.Y}"
+               Visibility="{Binding CanvasVisibility}">
             <Image.Clip>
                 <RectangleGeometry Rect="{Binding FrameRect}" />
             </Image.Clip>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using Wpf.Clippy.Types;
 using Wpf.Clippy.ViewModels;
@@ -32,6 +33,9 @@ namespace Wpf.Clippy
         public delegate void ClippyCharacterLocationEventHandler(ClippyCharacter sender, Point location);
         public event ClippyCharacterLocationEventHandler OnLocationChanged;
 
+        public delegate void ClippyCharacterAnimationCompletedEventHandler(ClippyCharacter sender, string animationName, AnimationMode mode);
+        public event ClippyCharacterAnimationCompletedEventHandler OnAnimationCompleted;
+
         private Point m_location;
 
         public Character CharacterType { get; }
@@ -60,9 +64,15 @@ namespace Wpf.Clippy
         {
             CharacterType = character;
             m_viewModel = new ClippyViewModel(character);
+            m_viewModel.OnAnimationCompleted += HandleAnimationCompleted;
             m_control = new ClippyControl(m_viewModel);
             m_control.OnDoubleClick += HandleDoubleClick;
             m_control.LocationChanged += HandleLocationChanged;
+        }
+
+        private void HandleAnimationCompleted(ClippyViewModel sender, string animationName, AnimationMode mode)
+        {
+            OnAnimationCompleted?.Invoke(this, animationName, mode);
         }
 
         private void HandleLocationChanged(object sender, EventArgs e)
@@ -80,10 +90,27 @@ namespace Wpf.Clippy
         {
             m_control.Show();
             m_location = new Point(m_control.Left, m_control.Top);
+
+            if (AnimationNames.Contains("Show"))
+            {
+                PlayAnimation("Show", AnimationMode.Once);
+            }
+            else
+            {
+                m_viewModel.CanvasVisibility = Visibility.Visible;
+            }
+        }
+
+        public void Hide()
+        {
+            m_control.SpeechPopup.IsOpen = false;
+            m_viewModel.CanvasVisibility = Visibility.Hidden;
+            m_control.Hide();
         }
 
         public void Close()
         {
+            m_control.SpeechPopup.IsOpen = false;
             m_control.Close();
         }
 

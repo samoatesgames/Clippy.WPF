@@ -4,6 +4,8 @@
 
 Clippy.WPF is a C# library which allows the creation and interaction of Clippy characters.
 
+![Clippy Preview](https://github.com/samoatesgames/Clippy.WPF/blob/main/Site/Bonzi.gif?raw=true)
+
 ## Features
 
  * Create and how animation Clippy characters
