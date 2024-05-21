@@ -29,9 +29,32 @@ namespace Wpf.Clippy
         public delegate void ClippyCharacterEventHandler(ClippyCharacter sender);
         public event ClippyCharacterEventHandler OnDoubleClick;
 
+        public delegate void ClippyCharacterLocationEventHandler(ClippyCharacter sender, Point location);
+        public event ClippyCharacterLocationEventHandler OnLocationChanged;
+
+        private Point m_location;
+
         public Character CharacterType { get; }
         public string ActiveAnimation => m_viewModel.ActiveAnimation;
         public IReadOnlyCollection<string> AnimationNames => m_viewModel.AnimationNames;
+
+        public Point Location
+        {
+            get => m_location;
+            set
+            {
+                if (m_location != value)
+                {
+                    m_location = value;
+                    m_control.Dispatcher.InvokeAsync(() =>
+                    {
+                        var location = m_location;
+                        m_control.Left = location.X;
+                        m_control.Top = location.Y;
+                    });
+                }
+            }
+        }
 
         public ClippyCharacter(Character character)
         {
@@ -39,6 +62,13 @@ namespace Wpf.Clippy
             m_viewModel = new ClippyViewModel(character);
             m_control = new ClippyControl(m_viewModel);
             m_control.OnDoubleClick += HandleDoubleClick;
+            m_control.LocationChanged += HandleLocationChanged;
+        }
+
+        private void HandleLocationChanged(object sender, EventArgs e)
+        {
+            m_location = new Point(m_control.Left, m_control.Top);
+            OnLocationChanged?.Invoke(this, m_location);
         }
 
         private void HandleDoubleClick(ClippyControl control, ClippyViewModel viewModel)
@@ -49,6 +79,7 @@ namespace Wpf.Clippy
         public void Show()
         {
             m_control.Show();
+            m_location = new Point(m_control.Left, m_control.Top);
         }
 
         public void Close()

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Wpf.Clippy;
@@ -14,6 +15,7 @@ namespace Clippy.Wpf.Demo.ViewModels
     internal class MainWindowViewModel : INotifyPropertyChanged
     {
         private ClippyCharacter m_character;
+        private Point m_characterPosition = new Point(100, 100);
 
         public ObservableCollection<string> Animations { get; }
             = new ObservableCollection<string>();
@@ -57,17 +59,25 @@ namespace Clippy.Wpf.Demo.ViewModels
             character.Say("Hello! This is a longer message to see if the wrapping works as expected.", TimeSpan.FromSeconds(4));
         }
 
+        private void OnCharacterLocationChanged(ClippyCharacter character, Point location)
+        {
+            m_characterPosition = location;
+        }
+
         private void RecreateCharacter(Character character)
         {
             if (m_character != null)
             {
                 m_character.OnDoubleClick -= OnCharacterDoubleClicked;
+                m_character.OnLocationChanged -= OnCharacterLocationChanged;
                 m_character.Close();
             }
 
             m_character = new ClippyCharacter(character);
             m_character.OnDoubleClick += OnCharacterDoubleClicked;
+            m_character.OnLocationChanged += OnCharacterLocationChanged;
             m_character.Show();
+            m_character.Location = m_characterPosition;
 
             AskQuestion();
             

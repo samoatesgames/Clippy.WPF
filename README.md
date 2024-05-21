@@ -21,10 +21,10 @@ Clippy.WPF is a C# library which allows the creation and interaction of Clippy c
  * Handle double-click events
  * Say text messages
  * Say custom ```FrameworkElement``` messages
+ * Get and set Clippy character location
  
 ## Missing Features
 
- * Positioning
  * Show & Hide support (including animation)
  * Audio
  * Events for animation start/complete
@@ -35,7 +35,7 @@ Clippy.WPF is a C# library which allows the creation and interaction of Clippy c
 
 ### Creating, showing and closing characters
 
-```
+```cs
 // Create the instance of the character we want
 var character = new ClippyCharacter(Character.Clippy);
 
@@ -48,7 +48,7 @@ character.Close();
 
 ### Animations
 
-```
+```cs
 // Get a list of all supported animations for the character
 var animations = character.AnimationNames;
 
@@ -62,7 +62,7 @@ character.PlayAnimation("Wave", AnimationMode.Once);
 
 ### Events
 
-```
+```cs
 // Subscribe to character double click events
 character.OnDoubleClick += HandleDoubleClick;
 
@@ -70,11 +70,19 @@ character.OnDoubleClick += HandleDoubleClick;
 void HandleDoubleClick(ClippyCharacter character)
 {
 }
+
+// Subscribe to character location changed events
+character.LocationChanged += HandleLocationChanged;
+
+// Called when a character is double clicked
+ void HandleLocationChanged(ClippyCharacter character, Point location)
+{
+}
 ```
 
 ### Speech
 
-```
+```cs
 // Display a text message, which will be automatically dismissed after 4 seconds
 character.Say("Hello!", TimeSpan.FromSeconds(4));
 
