@@ -75,7 +75,7 @@ void HandleDoubleClick(ClippyCharacter character)
 character.LocationChanged += HandleLocationChanged;
 
 // Called when a character is double clicked
- void HandleLocationChanged(ClippyCharacter character, Point location)
+void HandleLocationChanged(ClippyCharacter character, Point location)
 {
 }
 ```
@@ -90,7 +90,7 @@ character.Say("Hello!", TimeSpan.FromSeconds(4));
 // If no TimeSpan dismiss timout is specified, the speech bubble will be shown indefinatly
 character.Say(new TextBlock 
 { 
-    Text = "RAWR", 
+	Text = "RAWR", 
 	Foreground = Brushes.Red 
 });
 ```
