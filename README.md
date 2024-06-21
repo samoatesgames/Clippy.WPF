@@ -20,6 +20,8 @@ Clippy.WPF is a C# library which allows the creation and interaction of Clippy c
    * Rocky
    * Rover
  * Play any supported animation (looping and one shot)
+ * Show & Hide support (including animation)
+ * Events for animation complete
  * Handle double-click events
  * Say text messages
  * Say custom ```FrameworkElement``` messages
@@ -27,11 +29,13 @@ Clippy.WPF is a C# library which allows the creation and interaction of Clippy c
  
 ## Missing Features
 
- * Show & Hide support (including animation)
  * Audio
- * Events for animation start/complete
  * Events for message show/dismiss
  * Custom Clippy characters
+
+## Thanks
+
+Many thanks to the [ClippyJS](https://github.com/pi0/clippyjs) library which provided art and animation data used by this project.
    
 ## API
 
@@ -43,6 +47,9 @@ var character = new ClippyCharacter(Character.Clippy);
 
 // Show will present the character as a top most window
 character.Show();
+
+// Hides a character, hidden characters can be re-shown by calling Show() again.
+character.Hide();
 
 // Dismisses a character, a dismissed character can not be reshown and must be recreated
 character.Close();
@@ -60,6 +67,9 @@ character.PlayAnimation("Idle", AnimationMode.Loop);
 // Play an animation once
 // When it completes the previous animation will be resumed
 character.PlayAnimation("Wave", AnimationMode.Once);
+
+// Get the name of the currently active looping animation
+var activeLoopAnimation = character.GetActiveAnimation(AnimationMode.Loop);
 ```
 
 ### Events
@@ -76,8 +86,16 @@ void HandleDoubleClick(ClippyCharacter character)
 // Subscribe to character location changed events
 character.LocationChanged += HandleLocationChanged;
 
-// Called when a character is double clicked
+// Called when a characters location has changed
 void HandleLocationChanged(ClippyCharacter character, Point location)
+{
+}
+
+// Subscribe to character animation completed events
+character.OnAnimationCompleted += HandleAnimationCompleted;
+
+// Called when a characters animation has completed
+void OnCharacterAnimationComplete(ClippyCharacter sender, string animationName, AnimationMode mode)
 {
 }
 ```
