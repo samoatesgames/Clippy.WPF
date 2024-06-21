@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -16,6 +17,14 @@ namespace Wpf.Clippy.ViewModels
 {
     public class ClippyViewModel : INotifyPropertyChanged
     {
+        private enum State
+        {
+            Hidden,
+            Showing,
+            Active,
+            Hiding
+        }
+
         private readonly CharacterData m_data;
         private readonly CancellationTokenSource m_cancellationTokenSource;
 
@@ -25,7 +34,11 @@ namespace Wpf.Clippy.ViewModels
         private int m_frameIndex;
         private Point m_frameCoords;
         private Rect m_frameRect;
+        private readonly object m_animationLock = new object();
+
+        private State m_state = State.Hidden;
         private Visibility m_canvasVisibility = Visibility.Hidden;
+        private Action m_onHideComplete;
 
         private Popup m_speechPopup;
         private ClippyMessage m_activeMessage;
@@ -88,7 +101,7 @@ namespace Wpf.Clippy.ViewModels
         public Visibility CanvasVisibility
         {
             get => m_canvasVisibility;
-            set => SetField(ref m_canvasVisibility, value);
+            private set => SetField(ref m_canvasVisibility, value);
         }
 
         public ClippyViewModel(Character character)
@@ -110,6 +123,39 @@ namespace Wpf.Clippy.ViewModels
             m_cancellationTokenSource.Cancel();
         }
 
+        internal void Show()
+        {
+            m_state = State.Showing;
+            CanvasVisibility = Visibility.Visible;
+
+            if (AnimationNames.Contains("Show"))
+            {
+                PlayAnimation("Show", AnimationMode.Once);
+                return;
+            }
+
+            m_state = State.Active;
+            var idle = AnimationNames.FirstOrDefault(x => x.ToLower().Contains("idle")) ??
+                       AnimationNames.FirstOrDefault();
+            PlayAnimation(idle, AnimationMode.Loop);
+        }
+
+        internal void Hide(Action onHidden)
+        {
+            m_onHideComplete = onHidden;
+            m_speechPopup.IsOpen = false;
+            m_state = State.Hiding;
+
+            if (AnimationNames.Contains("Hide"))
+            {
+                PlayAnimation("Hide", AnimationMode.Once);
+                return;
+            }
+
+            CanvasVisibility = Visibility.Hidden;
+            m_onHideComplete?.Invoke();
+        }
+
         internal void SetSpeechPopup(Popup speechPopup)
         {
             m_speechPopup = speechPopup;
@@ -127,20 +173,43 @@ namespace Wpf.Clippy.ViewModels
                 return false;
             }
 
-            if (mode == AnimationMode.Once)
+            void SetFrameZero()
             {
-                m_playOnceAnimation = animationName;
-                m_frameIndex = 0;
-                m_data.Animations.TryGetValue(animationName, out m_activeAnimation);
-                return true;
+                if (m_activeAnimation == null)
+                {
+                    return;
+                }
+
+                var frame = m_activeAnimation.Frames[0];
+                if (frame.Images == null)
+                {
+                    return;
+                }
+
+                var images = frame.Images[0];
+                FrameCoords = new Point(-images[0], -images[1]);
             }
 
-            m_loopingAnimation = animationName;
-            if (m_playOnceAnimation == null)
+            lock (m_animationLock)
             {
-                m_frameIndex = 0;
-                m_data.Animations.TryGetValue(animationName, out m_activeAnimation);
+                if (mode == AnimationMode.Once)
+                {
+                    m_playOnceAnimation = animationName;
+                    m_frameIndex = 0;
+                    m_data.Animations.TryGetValue(animationName, out m_activeAnimation);
+                    SetFrameZero();
+                    return true;
+                }
+
+                m_loopingAnimation = animationName;
+                if (m_playOnceAnimation == null)
+                {
+                    m_frameIndex = 0;
+                    m_data.Animations.TryGetValue(animationName, out m_activeAnimation);
+                    SetFrameZero();
+                }
             }
+
             return true;
         }
 
@@ -175,21 +244,33 @@ namespace Wpf.Clippy.ViewModels
                         }
                     }
 
-                    if (m_activeAnimation == null)
+                    CharacterData.AnimationFrame frame = null;
+                    var frameCount = 0;
+                    lock (m_animationLock)
                     {
+                        if (m_activeAnimation != null 
+                            && m_state != State.Hidden)
+                        {
+                            var frames = m_activeAnimation.Frames;
+                            frameCount = frames.Length;
+                            frame = frames[m_frameIndex++];
+                        }
+                    }
+
+                    if (frame == null)
+                    {
+                        CanvasVisibility = Visibility.Hidden;
                         await Task.Delay(TimeSpan.FromMilliseconds(20), token)
                             .ConfigureAwait(false);
                         continue;
                     }
-                    
-                    var frames = m_activeAnimation.Frames;
-                    var frame = frames[m_frameIndex++];
 
                     if (frame.Images != null)
                     {
+                        CanvasVisibility = Visibility.Visible;
+
                         var images = frame.Images[0];
                         FrameCoords = new Point(-images[0], -images[1]);
-                        CanvasVisibility = Visibility.Visible;
                     }
                     else
                     {
@@ -199,14 +280,31 @@ namespace Wpf.Clippy.ViewModels
                     await Task.Delay(TimeSpan.FromMilliseconds(frame.Duration), token)
                         .ConfigureAwait(false);
 
-                    if (m_frameIndex >= frames.Length)
+                    if (m_frameIndex >= frameCount)
                     {
                         OnAnimationCompleted?.Invoke(this, 
                             ActiveAnimation,
                             m_playOnceAnimation != null ? AnimationMode.Once : AnimationMode.Loop);
 
-                        m_frameIndex = 0;
-                        if (m_playOnceAnimation != null)
+                        lock (m_animationLock)
+                        {
+                            m_frameIndex = 0;
+                        }
+
+                        if (m_state == State.Showing)
+                        {
+                            m_state = State.Active;
+                            m_playOnceAnimation = null;
+                            PlayAnimation(m_loopingAnimation, AnimationMode.Loop);
+                        }
+                        else if (m_state == State.Hiding)
+                        {
+                            m_state = State.Hidden;
+                            CanvasVisibility = Visibility.Hidden;
+                            m_playOnceAnimation = null;
+                            m_onHideComplete?.Invoke();
+                        }
+                        else if (m_playOnceAnimation != null)
                         {
                             m_playOnceAnimation = null;
                             PlayAnimation(m_loopingAnimation, AnimationMode.Loop);
