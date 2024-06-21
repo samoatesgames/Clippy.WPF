@@ -48,16 +48,13 @@ namespace Wpf.Clippy.ViewModels
 
         public IReadOnlyCollection<string> AnimationNames => m_data.Animations.Keys;
 
-        public string ActiveAnimation
+        public string GetActiveAnimation(AnimationMode mode)
         {
-            get
+            if (mode == AnimationMode.Once)
             {
-                if (m_playOnceAnimation != null)
-                {
-                    return m_playOnceAnimation;
-                }
-                return m_loopingAnimation;
+                return m_playOnceAnimation;
             }
+            return m_loopingAnimation;
         }
 
         public ClippyMessage ActiveMessage
@@ -282,8 +279,8 @@ namespace Wpf.Clippy.ViewModels
 
                     if (m_frameIndex >= frameCount)
                     {
-                        OnAnimationCompleted?.Invoke(this, 
-                            ActiveAnimation,
+                        OnAnimationCompleted?.Invoke(this,
+                            m_playOnceAnimation ?? m_loopingAnimation,
                             m_playOnceAnimation != null ? AnimationMode.Once : AnimationMode.Loop);
 
                         lock (m_animationLock)

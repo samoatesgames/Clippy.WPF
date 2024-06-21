@@ -23,10 +23,10 @@ namespace Clippy.Wpf.Demo.ViewModels
 
         public string SelectedAnimation
         {
-            get => m_character.ActiveAnimation;
+            get => m_character.GetActiveAnimation(AnimationMode.Loop);
             set
             {
-                if (value != m_character.ActiveAnimation)
+                if (value != m_character.GetActiveAnimation(AnimationMode.Loop))
                 {
                     m_character.PlayAnimation(value, AnimationMode.Loop);
                     OnPropertyChanged();

@@ -38,7 +38,7 @@ namespace Wpf.Clippy
         private Point m_location;
 
         public Character CharacterType { get; }
-        public string ActiveAnimation => m_viewModel.ActiveAnimation;
+        public string GetActiveAnimation(AnimationMode mode) => m_viewModel.GetActiveAnimation(mode);
         public IReadOnlyCollection<string> AnimationNames => m_viewModel.AnimationNames;
 
         public Point Location
