@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>WPF.Clippy</id>
+    <version>1.0.0</version>
+    <title>WPF.Clippy</title>
+    <authors>samoatesgames</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/samoatesgames/Clippy.WPF</projectUrl>
+    <description>Bring back animated clippy characters to your WPF applications</description>
+    <releaseNotes>Initial public release.</releaseNotes>
+    <copyright>Copyright Sam Oates Games © 2024</copyright>
+    <tags>Control Assistant</tags>
+  </metadata>
+</package>

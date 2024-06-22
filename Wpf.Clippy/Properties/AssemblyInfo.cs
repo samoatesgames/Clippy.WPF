@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Wpf.Clippy")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Bring back animated clippy characters to your WPF applications")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Sam Oates Games")]
 [assembly: AssemblyProduct("Wpf.Clippy")]
 [assembly: AssemblyCopyright("Copyright Sam Oates Games ©  2024")]
 [assembly: AssemblyTrademark("")]
